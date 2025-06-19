@@ -1,4 +1,4 @@
-# VHccAnalysis_CodeGuide
+# VHccAnalysis: Code Guide
 This is our code guide to help get through the code within the VHccAnalysis.
 
 ## How to Compile
