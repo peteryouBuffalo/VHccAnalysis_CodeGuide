@@ -33,3 +33,21 @@ To run the fits and produce the impact plots, we have scripts modified from HIG-
 \end{verbatim}
 
 \noindent Make sure for \verb|prepareHist.py| to go into the script and modify the channel (around Line 163). We need to run it for both ZccHcc and VHcc before moving onto running \verb|prepareFit.py|. To modify the plots for blinding the data in the signal region, there are modifications around Line 378 in \verb|prepareFit.py| that can be uncommented/swapped out to do this. To have the final plots use data and not MC, go into \verb|makePrePostFitPlot.sh| and uncomment the line about data (which just switches the flag from \verb|--MC| to \verb|--data|).
+
+Also, make sure that you update the \verb|init.py| used by the \verb|pyenv|. We need to make sure to include some methods that aren't getting called in the older version that we do need when we modify the script. In your local directory:
+
+\begin{verbatim}
+    /uscms/home/[user]/.pyenv/versions/3.11.8/lib/python3.11/site-packages/mplhep/init.py
+\end{verbatim}
+
+\noindent where \verb|[user]| is your username. You must change the following line:
+
+\begin{verbatim}
+    from . import alice, atlas, cms, label, lhcb, plot
+\end{verbatim}
+
+\noindent into this:
+
+\begin{verbatim}
+    from . import alice, atlas, cms, label, lhcb, plot, error_estimation
+\end{verbatim}

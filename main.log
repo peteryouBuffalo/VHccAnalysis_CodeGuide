@@ -1,4 +1,4 @@
-This is LuaHBTeX, Version 1.14.0 (TeX Live 2022/dev/Debian)  (format=lualatex 2025.4.1)  19 JUN 2025 13:18
+This is LuaHBTeX, Version 1.14.0 (TeX Live 2022/dev/Debian)  (format=lualatex 2025.4.1)  19 JUN 2025 14:46
  system commands enabled.
 **/home/peteryou-laptop/Documents/research/AnalysisNotes/VHccAnalysis_CodeGuide/main
 (/home/peteryou-laptop/Documents/research/AnalysisNotes/VHccAnalysis_CodeGuide/main.tex
@@ -308,7 +308,17 @@ Overfull \hbox (17.87952pt too wide) in paragraph at lines 8--8
 []    \TU/lmtt/m/n/12 git clone https://github.com/andrzejnovak/combine_postfits.git[] 
  []
 
-[29])) (./main.bbl [30]
+[29]
+Overfull \hbox (17.87952pt too wide) in paragraph at lines 41--41
+[]    \TU/lmtt/m/n/12 /uscms/home/[user]/.pyenv/versions/3.11.8/lib/python3.11/site-
+ []
+
+
+Overfull \hbox (54.95947pt too wide) in paragraph at lines 53--53
+[]    \TU/lmtt/m/n/12 from . import alice, atlas, cms, label, lhcb, plot, error_estimation[] 
+ []
+
+)) (./main.bbl [30]
 Underfull \hbox (badness 10000) in paragraph at lines 9--12
 []\TU/lmr/m/n/12 Work-book 5.1 chap-ter overview - get-ting started.  URL
  []
@@ -357,7 +367,7 @@ Here is how much of LuaTeX's memory you used:
  43 fonts using 3084839 bytes
  55i,7n,59p,913b,237s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/share/texmf/fonts/opentype/public/lm/lmmono12-regular.otf></usr/share/texmf/fonts/opentype/public/lm/lmroman12-bold.otf></usr/share/texmf/fonts/opentype/public/lm/lmroman12-regular.otf></usr/share/texmf/fonts/opentype/public/lm/lmroman17-regular.otf></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb>
-Output written on main.pdf (32 pages, 98879 bytes).
+Output written on main.pdf (32 pages, 99487 bytes).
 
 PDF statistics: 145 PDF objects out of 1000 (max. 8388607)
  95 compressed objects within 1 object stream
