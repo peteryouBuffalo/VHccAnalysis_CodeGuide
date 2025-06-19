@@ -1,0 +1,38 @@
+\documentclass[12pt]{report}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage[numbers]{natbib}
+\usepackage{float}
+
+\setlength{\parskip}{1em}      % space between paragraphs
+\usepackage{titlesec}
+\titlespacing*{\chapter}{0pt}{-20pt}{20pt}
+
+\usepackage[table]{xcolor}
+\usepackage{colortbl}
+\usepackage{booktabs}  % For better table lines
+
+\definecolor{lightgray}{gray}{0.9}
+\definecolor{lightergray}{gray}{0.95}
+
+\title{VqqHcc Analysis Manual : A Guide through the Code}
+\author{Peter Young}
+
+\begin{document}
+
+\maketitle
+\newpage
+\tableofcontents
+\newpage
+
+\input{intro}
+\input{chapter2/basics}
+\input{chapter3/analysis_code}
+\input{chapter4/selection_code}
+\input{chapter5/running_code}
+\input{chapter6/main}
+
+\bibliographystyle{unsrtnat}
+\bibliography{references}
+
+\end{document}

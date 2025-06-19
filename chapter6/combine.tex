@@ -1,0 +1,35 @@
+\section{HiggsCombine}
+
+To run the fits and produce the impact plots, we have scripts modified from HIG-24-017 that simplify things greatly for us. Make sure you are in your \verb|Fit| workspace. There is a special repository/library that is needed for this:
+
+\begin{verbatim}
+    cd Fit
+    git clone https://github.com/andrzejnovak/combine_postfits.git
+\end{verbatim}
+
+\noindent Once the repository is cloned, you need to set up the environment to use it:
+
+\begin{verbatim}
+    cd combine_postfits
+    curl https://pyenv.run | bash 
+    export PATH="$HOME/.pyenv/bin:$PATH"
+    eval "$(pyenv init --path)"
+    eval "$(pyenv init -)"
+    eval "$(pyenv virtualenv-init -)"
+    exec "$SHELL"
+    pyenv local 3.11.8
+    pip3 install -e .
+\end{verbatim}
+
+\noindent Once the scripts are set up, you should be able to run the following scripts:
+
+\begin{verbatim}
+    python3 prepareHist.py
+    python3 prepareFit.py
+    python3 runLimit.py
+    python3 runImpactFitDiag.py
+    chmod +x makePrePostFitPlot.sh
+    ./makePrePostFitPlot.sh
+\end{verbatim}
+
+\noindent Make sure for \verb|prepareHist.py| to go into the script and modify the channel (around Line 163). We need to run it for both ZccHcc and VHcc before moving onto running \verb|prepareFit.py|. To modify the plots for blinding the data in the signal region, there are modifications around Line 378 in \verb|prepareFit.py| that can be uncommented/swapped out to do this. To have the final plots use data and not MC, go into \verb|makePrePostFitPlot.sh| and uncomment the line about data (which just switches the flag from \verb|--MC| to \verb|--data|).

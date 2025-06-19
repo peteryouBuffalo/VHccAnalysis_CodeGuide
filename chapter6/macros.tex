@@ -1,0 +1,75 @@
+\section{Macros}
+
+It is useful to understand what macros we have and what they are tasked to do in this analysis. This will just go through different ones we have for different purposes.
+
+\subsection{Data-Driven QCD Estimation in Top CR}
+This method is discussed in the analysis notes. To actually go about doing it, we need to be able to run the code and then plots the results. The calculations are done using \verb|calc_bckg_est_ratio.py|. For each  year, this takes the events in the QCD-enriched top CR and calculates the transfer function with desired regions. In our case, we want to compare the top CR and the QCD-enriched top CR. We compare the number of events in QCD MC files to get the transfer function. 
+
+The only modifications to be made here are the input and output folders. The input folder should be wherever you stored your results from condor. The output folder is wherever in your workspace that you want. There are two output files created by this script:
+
+\begin{itemize}
+    \item \verb|QCD_CR_evt_per_year.json| - this keeps track of how many events were seen for each sample and category that was checked for calculating the TF
+    \item \verb|QCD_TF_per_year.json| - this stores the calculated transfer function values for each year of Run 2. Each year only has a constant as a transfer function. \textbf{This is the most useful file for this!}
+\end{itemize}
+
+\noindent This script is run by:
+
+\begin{verbatim}
+    python3 calc_bckg_est_ratio.py
+\end{verbatim}
+
+\noindent To plot the results, run:
+
+\begin{verbatim}
+    python3 plot_bckg_est.py
+\end{verbatim}
+
+\noindent In this plotting script, you need to make sure that \verb|json_folder| references the folder where you stored the JSON files created by the previous script. This script also has an option for blinding a given region.
+
+\subsection{Control Plots}
+To produce the control plots necessary for the analysis, you run \verb|plot_dataMC.py|. This script sets up to produce plots for any region of interest while making sure to blind the data in the signal region (or any regions if you truly desire). To run it, you run:
+
+\begin{verbatim}
+    python3 plot_dataMC.py
+\end{verbatim}
+
+\noindent All you have to modify here is make sure the proper input files are use and that you set the regions you want.
+
+\subsection{Pileup Reweighting}
+The pileup reweighting is done in a similar way to the data-driven QCD background, in the sense that one script calculates a reweighting and the other plots. To plot the pileup distributions (from data given by Lumi POG and MC) and the consistency check, run:
+
+\begin{verbatim}
+    python3 calc_PU_reweight.py
+\end{verbatim}
+
+\noindent To produce the NPV plots before and after corrections, run:
+
+\begin{verbatim}
+    python3 plot_NPVs.py
+\end{verbatim}
+
+\subsection{Systematics}
+If you want to produce a plot overlay that shows the effects of a certain systematic and its uncertainties, run:
+
+\begin{verbatim}
+    python3 make_syst_unc_multiPlot.py
+\end{verbatim}
+
+\noindent To produce the plots for all the systematics for all the samples, you need to produce a LOT of plots. This is why I created \verb|plot_syst_unc.py| which produces the plots in bunches that you set. You have to set the following:
+
+\begin{itemize}
+    \item \verb|dirpath| - the input files
+    \item \verb|output_dir| - the output folder
+    \item \verb|batch_to_plot| - which set of plots to produce. The options are listed inside the macro.
+\end{itemize}
+
+\noindent This is done because the system overloads if you try to do all the samples at once. For theoretical uncertainties, run:
+
+\begin{verbatim}
+    python3 theory_unc.py
+\end{verbatim}
+
+\noindent and make sure to set the similar settings inside the macro.
+
+\subsection{Other Files}
+There are many other files. Some are useful and others are just old versions of scripts that didn't get deleted/removed. Feel free to sort through them. Some of the stuff might be useful. \verb|my_funcs.py| that contains many custom plotting scripts.

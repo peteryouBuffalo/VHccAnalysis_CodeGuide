@@ -1,0 +1,91 @@
+\chapter{Running the Code}\label{ch:run_code}
+There are many steps to running the main analysis. The first thing you want to do is run over the ROOT files to get the output histograms that we desire. This is the main per-event code run by \verb|Ana.cxx|. Once this is done, further analysis using macros can be done. 
+
+\section{Compiling the Code}
+The code must be compiled for the different eras and conditions that are desired. There are makefiles that simplify this for us. The general format is as follows:
+
+\begin{verbatim}
+    make FORMAT=[DATA_MC_YEAR]SUBFORMAT=[SUB_CATEGORY] \ 
+    SAMPLE=MC_NOTVZ PROCESSING=NORMAL NANOAOD=NANOAODV9 INPUT=TCHAIN
+\end{verbatim}
+
+\noindent The main parts to focus on are the \verb|FORMAT| and \verb|SUBFORMAT|. The format relates to which year and whether data or MC is being used. The subformat is mainly for eras in data in which certain elements might not exist. For example, certain triggers are missing for 2017 era B, so we need to include \verb|SUBFORMAT=DATA_2017B|. If we want to compile for MC or data in 2018, we would have the following:
+
+\begin{verbatim}
+    make FORMAT=MC_2018 SUBFORMAT=MC_2018 SAMPLE=MC_NOTVZ \
+    PROCESSING=NORMAL NANOAOD=NANOAODV9 INPUT=TCHAIN
+
+    make FORMAT=DATA_2018 SUBFORMAT=DATA_2018B SAMPLE=DATA_NOTVZ \
+    PROCESSING=NORMAL NANOAOD=NANOAODV9 INPUT=TCHAIN
+\end{verbatim}
+
+\noindent You can ignore most of the rest of the elements in these compile statements for now.
+
+\section{Running the Code}
+Once the code is compiled, it can be run using the main shell made by the makefile. The general format is as follows:
+
+\begin{verbatim}
+    ./make -filelist [Filelist] -out [output_area] -data [0 = no, 1 = yes] \
+    -year [Year] -syst [Systematic]-xccEffFileName NONE \
+    -centralGenWeight 0 -lastentry [N]
+\end{verbatim}
+
+\noindent The filelists come from the \verb|FileLists| folder and the output area is wherever you want final results to be stored. For data files, use \verb| -data 1 | and for MC, use \verb| -data 0 |. Year is either 2016, 2016PRE, 2017, or 2018. \verb|-syst| is set as NONE for the default analysis. The names of systematics can be checked in the code (Ana.cxx, etc.) to see how we name other systematics. If \verb|lastentry| is not included, then the code will run over all events in the file. Otherwise, it will run over $N$ events. Technically, you can also include \verb|-firstentry| to start from a particular event. For example, if we want to run over 2018 data era B for 10,000 events, we run the following:
+
+\begin{verbatim}
+    ./main -filelist FileLists_test/JetHT_DATA_2018B.txt \
+    -out Tmp/output_testNONE_DATA_2018B.txt.root -data 1 \
+    -year 2018 -syst NONE -xccEffFileName NONE -centralGenWeight 0 \
+    -lastentry 10000
+\end{verbatim}
+
+\section{Local Test Runs}
+There are files included that can help make sure the code runs for all eras we expect. To do so, you can run the following scripts in the following manner:
+
+\begin{verbatim}
+    chmod +x test_MC_all.sh
+    ./test_MC_all.sh
+    chmod +x test_data_all.sh
+    ./test_data_all.sh
+\end{verbatim}
+
+\noindent This runs over each year of Run 2 to help check for each year of interest.
+
+\section{Submitting to Condor}
+Rather than run everything slowly on a local machine, it is more efficient to submit everything to the computing grid to run in parallelized jobs. (This is why we build from the EDMAnalyzer base, because the code is already formatted easily in a way to be able to submit jobs.) It is a good idea to run the tests locally before submitting. Otherwise, jobs will fail. The main files in the \verb|SubmitToCondor| files that we care about are \verb|launch_v3.py| and \verb|launch_v3_syst.py|. The latter just does what the former does but for multiple systematics, so we focus on the first one, \verb|launch_v3.py|.
+
+\subsection{Local Paths}
+There are a few different paths in the script that must be defined.
+
+\subsubsection{sourceDir}
+\verb|sourceDir| defines where our code is coming from. This is just the folder one level above \verb|SubmitToCondor|, i.e. your workspace. In my case, I have:
+
+\begin{verbatim}
+    sourceDir = '/uscms_data/d3/peteryou/boosted_new/ \
+        CMSSW_14_0_6/src/VHccAnalysis/'
+\end{verbatim}
+
+\subsubsection{condorRunDir}
+\verb|condorRunDir| is where the actual \verb|.sh| scripts and error/log files for each sample are stored. It's useful to have a dedicated area for this. In my case, I have a special space in \verb|/uscmst1b_scratch/lpc1/lpcphys/|, but you need to be given a space in here to use it.
+
+\subsubsection{outputDir\_eos}
+You need somewhere where the output files from the jobs are placed. This will take up a lot of space since the code take each sample and break them down into smaller jobs. For a single sample, you might have 50 individual jobs that will be compiled back together. \verb|outputDir_eos| is where these files should be stored, typically in your EOS space.
+
+\subsubsection{outputDir\_scratch}
+\verb|outputDir_scratch| is where you want the final re-compiled results to end up. This is typically a temporary folder in your workspace. Make sure this folder is included in the \verb|.gitignore| file for the Github repository. These files will end up being GB in size and take up too much space.
+
+\subsection{Parameters \& Settings}
+There are many settings to be modified when submitting to Condor. The following are relatively simple:
+
+\begin{itemize}
+    \item \verb|runMode| - this is set for either sending the jobs to the grid or pulling completed jobs back to your local area. Set to 0 for submitting jobs, and 1 for retrieving completed ones.
+    \item \verb|submit| - this is a boolean that can be used for testing the setup. If you want to make sure the code works without actually doing the step of sending jobs to the grid, set it to \verb|False|. Otherwise, leave it as \verb|True|.
+    \item \verb|debug| - this is used for testing and forces to only submit for a small number of events (right now, it's set at 100,000 events)
+    \item \verb|haddData| - data must be submitted by era (A,B,C,D, etc.) but ultimately, you only want one data file per year. This helps re-combine the eras at the end. \textcolor{red}{NOTE: This is currently broken!}
+\end{itemize}
+
+\subsubsection{dataSet\_list}
+\verb|dataSet_list| stores the dataset list you want to use for the submitted jobs. This is where you set that you only want to run over all MC, all data, a specific year, etc. What you set to run depends on what file you created in \verb|Dataset_lists|.
+
+\subsubsection{dir\_file\_list}
+\verb|dir_file_list| is where you want the files to come from. In general, we just use the \verb|FileLists| folder which contains all the proper paths for xrootd. However, to avoid issues with data, we have a special folder \verb|FileLists_JetHT| for those samples.

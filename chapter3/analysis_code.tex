@@ -1,0 +1,114 @@
+\chapter{Analysis Code}\label{ch:ana_code}
+
+At the time this is written (due to debugging and fixes in code), there is likely other branches where code is stored. However, by the time you read this, likely everything you need is just in the main branch of the Github repository~\cite{github}. It's good for us to go through step-by-step how the code is setup.
+
+\section{Overview \& Structure}\label{sec:overview}
+The code structure is setup and based on the \verb|EDMAnalyzer| structure created by CMS~\cite{edm_ana}. It is not necessary to understand how to build this yourself, and you can just start with the base that we have setup. There are two major components to the code that you initially need to understand.
+
+\begin{itemize}
+    \item \verb|src| - this is the source repository where the major code for the analysis is stored.
+    \item \verb|Ana.cxx| - this is the overall C++ script that compiles everything into the analyzer and runs the actual analysis via the \verb|EDMAnalyzer| structure.
+    \item \verb|UtilScripts| - this is a directory of files generally related to calculating special transfer functions, efficiencies, calibrations, etc. 
+    \item \verb|macros| - this is a directory for many macro scripts that do stuff like plotting variables we're interested in. Stuff tends to get mixed between \verb|UtilScripts| and here.
+    \item \verb|SubmitToCondor| - this contains scripts needed for submitting jobs to Condor to run on the grid.
+\end{itemize}
+
+There are other folders that are mostly just storage:
+
+\begin{itemize}
+    \item \verb|CalibData| - this contains locally-stored calibration files
+    \item \verb|Configs| - this contains files related to constants, and configuration information related to ROOT files, samples, cross sections, etc.
+    \item \verb|Dataset_lists| - this contains files to be used for associating samples with the appropriate NanoAOD files
+    \item \verb|FileLists| - this contains the actual xrootd sources for where to find the files stored in the CERN computing system.
+\end{itemize}
+
+\section{Source Folder, src}\label{sec:src}
+Every file in this folder has its use. However, there are many that are there for general structure and can be ignored. Any file not mentioned in this section can be ignored for your general purposes.
+
+\subsection{Global.cxx/.h}
+The \verb|Global.cxx/.h| files take global constants stored in \verb|Configs/inputParameters.txt| and properly stores them so that they can be used and called anywhere in the code. While it is inefficient, the parameter must be listed in the text file and then set up in \verb|Global.h| so that it is recognized. Otherwise, it will just give null values. These values can be referenced in the following manner:
+
+\begin{verbatim}
+    CUTS.Get<T>("constants_name")
+\end{verbatim}
+
+\noindent $T$ is the type of variable that the constant is. For example, the $p_T$ cut for lepton vetoing is given by:
+
+\begin{verbatim}
+    CUTS.Get<float>("lep_veto_pt")
+\end{verbatim}
+
+\noindent Unless a new constant is added, you likely will not have to modify this file. You can change the value of a constant in \verb|inputParameters.txt| without needing to modify these scripts.
+
+\subsection{Obj.cxx}
+At their lowest level, the particles we store are essentially just momentum four-vectors. ROOT has a class for these (TLorentzVector), but we want to be able to build upon them to make easier classes. The \verb|Obj.cxx| file contains a multitude of classes that build upon the four-vector to store proper information. They are as follows:
+
+\begin{itemize}
+    \item \verb|LepObj| - leptons (also general use)
+    \item \verb|JetObj| - AK4 jets
+    \item \verb|JetObjBoosted| - AK8 jets
+    \item \verb|ZObj| - Z boson
+    \item \verb|HObj| - Higgs boson
+\end{itemize}
+
+\noindent For what specific variables are stored for each type, you can check the file more closely. The most useful element is each object has a TLorentzVector \verb|m_lvec| which has its own functions for pulling desired values. Each object is constructed from the appropriate information - leptons from general information, jets are similar, and Z and Higgs bosons are reconstructed from jet objects.
+
+\subsection{Plots.cxx/.h}
+There will be lots of independent plots/histograms in the analysis that just use \verb|TH1*| from ROOT. However, there are many cases where things would get redundant and complicated very quickly, so we have groups of plots that are produced together to make things simpler. Within \verb|Plots.h|, we define many classes of plots that simplify code. Note, each of these classes are designed to allow for events to be weighted and have an optional parameter for weight (default = 1). All plots are also initially set up so that the values have their uncertainty stored as $w^2$ (i.e. \verb|TH1*->Sumw2()|). Note that there are many ways in which these classes can be improved and restructured so save redundancy, but it is not useful at this time since everything works.
+
+\subsubsection{VHPlots}
+\verb|VHPlots| is a class that contains plots for expected events of this analysis - ones containing a Higgs boson produced in association with a vector boson. Thus, any plots we could want related to such things area included here - $p_T$, $\eta$, mass, phase-space separation, etc. This plot takes in the information of bosons by taking in a \verb|HObj| instance and \verb|ZObj| instance. Additionally, information about jets used in the event can be filled from a vector of jets. For example, this would look like:
+
+\begin{verbatim}
+    HObj h_obj(//...);
+    ZObj z_obj(//...);
+    std::vector<JetObj>& jets {//...};
+
+    vh_plots->Fill(h_obj, z_obj);
+    vh_plots->FillJets(jets);
+    vh_plots->FillNjet(jets.size());
+\end{verbatim}
+
+\noindent The whole of the list of plots in the class is returned in a vector by the method \verb|returnHisto|.
+
+\subsubsection{VHBoostedPlots}
+This is the same thing as \verb|VHPlots| but with extra information included for the boosted case.
+
+\subsubsection{HBoostedPlots}
+This is a class that could be used with the above to help save time of information on a boosted Higgs object. It stores the general information for a boosted Higgs object.
+
+\subsubsection{BoostedJetEffPlots}
+This is used for 3D plots related to calculating efficiency. You can ignore this for now.
+
+\subsubsection{EffPlots}
+This is a class for helping calculate efficiency. You can also ignore this for now.
+
+\subsection{JESUncPlots}
+This is a class created for purposes of calculating and storing JES uncertainty information. 
+
+\subsection{Reader.cxx/.h}
+While we have access to all the branches stored in \verb|NANOAODv9| by default, we still need to set up our code to read and recognize these branches from the ROOT tree where they're stored. \verb|Reader.h| is where you set up branches to be read to be used in the analysis. Some branches only exist in MC or certain years, so make sure to set it up properly so that the branches only exist where needed. For example, we set up macros like \verb|DATA_2016|, \verb|MC_2016|, etc. to differentiate between each year and data vs MC. These branches for input all take one of the following general formats:
+
+\begin{verbatim}
+    TTreeReaderValue<T> var_name = {fReader, "string_name"};
+    TTreeReaderArray<T> var_name = {fReader, "string_name"};
+\end{verbatim}
+
+The first is used for variables where there's only one value for the entire event. The second is used where there are multiple in a single event. For example, the following are included for jets:
+
+\begin{verbatim}
+    TTreeReaderValue<UInt_t> nJet = {fReader, "nJet"};
+    TTreeReaderArray<Float_t> Jet_pt = {fReader, "Jet_pt"};
+\end{verbatim}
+
+\noindent These names must follow from what's stored in \verb|NANOAODv9| given by the NANOAOD documentation~\cite{nanoaod_doc}.
+
+
+\subsection{Selector.cxx/.h}
+These contain many special methods (we create/add) for special calculations needed, such as uncertainties, calibrations, etc. Unless you're looking for a specific method or need to update one, there's no need to look in here.
+
+\subsection{VbbHcc\_selector.cxx/.h}
+This is the \textbf{MAIN} file you'll be interested in. This is where the main analysis is done. This will be discussed later in detail.
+
+\section{Ana.cxx}
+All the code in the \verb|src| folder is fine on its own, but it needs to be used. This is where \verb|Ana.cxx| comes in. This is the main entry point of the code running. It properly sets up the processor and instance of the \verb|VbbHcc_selector|. If any special information such as proper files per year or calibarations must be added, they are included here based on the proper year/conditions. There is very little time in which you will need to modify this script.

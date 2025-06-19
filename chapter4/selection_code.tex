@@ -1,0 +1,57 @@
+\chapter{Main Event Selection Code}\label{ch:sel_code}
+
+To understand how to use and modify the code, you need to know what goes where inside the \verb|VbbHcc_selector| code. This will not go over every single element of the analysis. Duong and I can explain it (or you look through the analysis notes). Instead, this will just tell you what has to go where.
+
+\section{Header File}
+Inside the header file, you need to declare all the histograms and plots you're interested in. This can either be \verb|TH1D| instances or instances of our specialized plot classes. Examples of what this looks like is:
+
+\begin{verbatim}
+    TH2D* h_Xcc_vs_pQCD_raw;
+    VHBoostedPlots* h_ZccHcc_PN_med;
+\end{verbatim}
+
+\noindent Nothing fancy is really needed here. Now, we need to look inside the C++ file.
+
+\section{SlaveBegin}
+The first section of the selection code is the \verb|SlaveBegin| which takes the initial reader and allows us to set things up. We need to define all the plots and classes we declared in the header file. Once all the proper elements are defined, they need to be added to the reader's output list so they can be accessed in the output files. This is done as follows:
+
+\begin{verbatim}
+    r->GetOutputList()->Add(plot_name);
+\end{verbatim}
+
+\noindent For the special classes we have, this is done by looping through all the histograms returned by that class's \verb|returnHisto()| method, as seen here:
+
+\begin{verbatim}
+    std::vector<TH1*> tmp = h_ZccHcc_PN_med->returnHisto() ;
+    for(size_t i=0;i<tmp.size();i++) r->GetOutputList()->Add(tmp[i]);
+\end{verbatim}
+
+\section{Special Methods}
+
+There are special methods that exist in our code. For example, for generator-level particles, we want to get the IDs and information of Z and H decay daughter particles. 
+
+\section{Process}
+\verb|process| is where the main processing occurs. This breaks down into mulltiple steps.
+
+\subsection{Event Weights}
+First, the weights are calculated given either values by default inside of the ROOT files or methods/calibration files we have stored.
+
+\subsection{Object Selection}
+Given the criteria we use for this analysis defined in the analysis notes, we go through the information stored in NanoAOD to choose only leptons and jets that we want.
+
+\subsection{Control \& Signal Regions}
+Once all objects are selected, we go through the regions of the analysis that we want. This includes:
+
+\begin{itemize}
+    \item W-tag CR
+    \item SR - ZccHcc
+    \item CR - QCD (ZccHcc)
+    \item CR - Top (ZccHcc)
+    \item SR - VqqHcc
+    \item CR - QCD (VqqHcc)
+    \item CR - Top (VqqHcc)
+    \item CR - Top, QCD-enriched (VqqHcc)
+\end{itemize}
+
+\section{Terminate}
+This is where you should delete or close any necessary items that we need to be closed. Currently, we do nothing here, so you can ignore it for the most part.

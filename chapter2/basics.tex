@@ -1,0 +1,55 @@
+\chapter{Basic Setup}\label{ch:basics}
+
+What is the most basic information you need to know for running the code for this analysis? As previously stated in Chapter~\ref{ch:intro}, all the resources needed are listed in the bibliography. It's best to start with how to access the code.
+
+\section{Setting Up Your Environment}\label{sec:setup}
+This assumes that you already have an account setup on LPC and know how to navigate it. We will skip all of those steps. Once we are on LPC, we need to get the proper version of the CMSSW software. While we are using (at this point) a very old version of NanoAOD - specifically \verb|NanoAODv9|, a lot of the analysis software used needs a much newer version of CMSSW. For this analysis, we currently use \verb|CMSSW_14_0_6|. We first need to make sure we set up this version of CMSSW.
+
+\begin{verbatim}
+    cd [your_working_space]
+    csmrel CMSSW_14_0_6
+    cd CMSSW_14_0_6/src
+    cmsenv
+\end{verbatim}
+
+\noindent Once this area is setup, you can download the code from the Github:
+
+\begin{verbatim}
+    git clone https://github.com/peteryouBuffalo/VHccAnalysis.git
+    cd VHccAnalysis
+\end{verbatim}
+
+\noindent Note that this repository is public, so you should not need any special permissions to do this. However, if you wish to push code to Github at any point, you will need to be given access.
+
+This is the basic environment you need and you should be able to access all the code!
+
+\section{Environment for HiggsCombine}\label{sec:setup_combine}
+There are many newer tools taken from other analyses that we use, specifically HIG-24-017, that use newer versions. Thus, to properly setup a space for HiggsCombine, you need to do the following:
+
+\begin{verbatim}
+    cd [your_working_space_v2]
+    cmsrel CMSSW_14_1_0_pre4
+    cd CMSSW_14_1_0_pre4
+    cmsenv
+\end{verbatim}
+
+\noindent Note that you likely want to keep two workspaces - one for the analysis and its actual work, and a second one for the fitting/Combine steps. Likely, you want two spaces named as something like what follows:
+
+\begin{itemize}
+    \item \verb|/uscms_data/d3/[user]/boosted_VHccAnalysis/Ana|
+    \item \verb|/uscms_data/d3/[user]/boosted_VHccAnalysis/Fit|
+\end{itemize}
+
+\noindent Depending on how savvy you are with writing code, it might be helpful to write yourself special terminal commands to easily switch back and forth between the two, i.e. \verb|mv_ana| and \verb|mv_fit|.
+
+The fitting and Combine code scripts are kept in a separate branch within the code. To access this code, in your \verb|Fit| working space, you need to do the following:
+
+\begin{verbatim}
+    git clone https://github.com/peteryouBuffalo/VHccAnalysis.git
+    cd VHccAnalysis
+    git checkout Fitting_scripts
+\end{verbatim}
+
+\noindent The branch \verb|Fitting_scripts| contains all of the necessary scripts for the Fitting process.
+
+Now that you've got all the workspaces set up, it's time to dive into the code!

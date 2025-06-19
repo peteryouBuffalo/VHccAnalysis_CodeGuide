@@ -1,0 +1,42 @@
+\begin{thebibliography}{7}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[cms()]{cms_getting_started}
+Workbook 5.1 chapter overview - getting started.
+\newblock URL
+  \url{"https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookStartingGrid"}.
+
+\bibitem[{D. Nugyen, P. Young}()]{github}
+{D. Nugyen, P. Young}.
+\newblock Github - vhccanalysis.
+\newblock URL \url{"https://github.com/peteryouBuffalo/VHccAnalysis"}.
+
+\bibitem[edm()]{edm_ana}
+4.1.2 writing your own edanalyzer.
+\newblock URL
+  \url{"https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookWriteFrameworkModule"}.
+
+\bibitem[nan()]{nanoaod_doc}
+Nanoaod auto-documentation.
+\newblock URL \url{"https://cms-nanoaod-integration.web.cern.ch/autoDoc/"}.
+
+\bibitem[Novak()]{2prong}
+Andrzej Novak.
+\newblock W tagandprobe rhalphalib implementation.
+\newblock URL \url{"https://github.com/andrzejnovak/TnpSF"}.
+
+\bibitem[Smith()]{rhalphalib}
+Nicholas Smith.
+\newblock rhalphalib.
+\newblock URL \url{"https://github.com/nsmith-/rhalphalib"}.
+
+\bibitem[D.~Nguyen()]{vqqhcc_twiki}
+P.~Young D.~Nguyen.
+\newblock An-24-199 twiki.
+\newblock URL \url{"https://twiki.cern.ch/twiki/bin/viewauth/CMS/VqqHcc"}.
+
+\end{thebibliography}

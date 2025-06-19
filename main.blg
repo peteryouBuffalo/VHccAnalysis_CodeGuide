@@ -1,0 +1,54 @@
+This is BibTeX, Version 0.99d (TeX Live 2022/dev/Debian)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: main.aux
+The style file: unsrtnat.bst
+Database file #1: references.bib
+Warning--empty year in cms_getting_started
+Warning--empty year in github
+Warning--empty year in edm_ana
+Warning--empty year in nanoaod_doc
+Warning--empty year in 2prong
+Warning--empty year in rhalphalib
+Warning--empty year in vqqhcc_twiki
+You've used 7 entries,
+            2481 wiz_defined-function locations,
+            575 strings with 5121 characters,
+and the built_in function-call counts, 1700 in all, are:
+= -- 141
+> -- 28
+< -- 4
++ -- 22
+- -- 8
+* -- 82
+:= -- 223
+add.period$ -- 18
+call.type$ -- 7
+change.case$ -- 14
+chr.to.int$ -- 7
+cite$ -- 17
+duplicate$ -- 98
+empty$ -- 217
+format.name$ -- 12
+if$ -- 381
+int.to.chr$ -- 1
+int.to.str$ -- 8
+missing$ -- 0
+newline$ -- 40
+num.names$ -- 12
+pop$ -- 87
+preamble$ -- 1
+purify$ -- 7
+quote$ -- 0
+skip$ -- 92
+stack$ -- 0
+substring$ -- 17
+swap$ -- 14
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 49
+warning$ -- 7
+while$ -- 8
+width$ -- 0
+write$ -- 78
+(There were 7 warnings)

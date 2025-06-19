@@ -1,0 +1,5 @@
+# VS Code settings
+.vscode/
+
+# VS Code workspace settings (if using .code-workspace files and don’t want to track them)
+*.code-workspace
